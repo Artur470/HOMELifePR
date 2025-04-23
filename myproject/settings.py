@@ -56,23 +56,45 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'users',
-    'product',
-    'cart',
 
+
+    #library
+    'rest_framework',
+    'rest_framework_simplejwt',
+    'django_filters',
+    'decouple',
+    'drf_yasg',
+    'corsheaders',
+
+    #auth
+    'rest_framework.authtoken',
+    'dj_rest_auth',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'dj_rest_auth.registration',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.twitter',
+
+    #apps
+    'product.apps.ProductConfig',
+    'users.apps.UsersConfig',
+    'cart.apps.CartConfig'
 ]
 
-AUTH_USER_MODEL = 'users.User'
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
+    #'config.middleware.CORSMiddleware',
 ]
-
 ROOT_URLCONF = 'myproject.urls'
 
 TEMPLATES = [
@@ -159,6 +181,24 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.AllowAny',
+    ],
+
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',  # Обе аутентификации
+    ],
+
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',  # Добавлено для обработки JSON запросов
+    ],
+}
+
+
+
 
 
 CSRF_TRUSTED_ORIGINS = ['https://homelifee.onrender.com']
@@ -171,7 +211,7 @@ CORS_ALLOW_METHODS = [
     'DELETE',
     'PATCH',
 ]
-
+AUTH_USER_MODEL = 'users.User'
 import os
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 CORS_ALLOW_ALL_ORIGINS = True
