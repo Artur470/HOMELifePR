@@ -7,13 +7,12 @@ from django.conf import settings
 
 from rest_framework import serializers
 from .models import Product, Brand, Category, Color
-
 class CategorySerializer(serializers.ModelSerializer):
     value = serializers.SerializerMethodField()
 
     class Meta:
-        model = Category  # Обратите внимание, что вы используете модель Category, а не Brand
-        fields = ['id','label', 'value']
+        model = Category
+        fields = ['id', 'label', 'value']
 
     def get_value(self, obj):
         translation = {
@@ -49,19 +48,15 @@ class CategorySerializer(serializers.ModelSerializer):
             'хлебопечка': 'bread maker',
         }
 
-        # Если значение value уже есть, возвращаем его
-        if obj.value:
-            return translation.get(obj.value, obj.value).lower()
-
-        # Если value нет, присваиваем его на основе label
-        return translation.get(obj.label, obj.label).lower()
+        # Перевод значения value на английский, если оно есть в словаре
+        return translation.get(obj.value, obj.value)  # Нет необходимости использовать lower()
 
     def create(self, validated_data):
         label = validated_data.get('label')
 
         # Словарь перевода
         translation = {
-             'холодильник': 'refrigerator',
+            'холодильник': 'refrigerator',
             'стиральная машина': 'washing machine',
             'посудомоечная машина': 'dishwasher',
             'микроволновая печь': 'microwave',
@@ -94,7 +89,7 @@ class CategorySerializer(serializers.ModelSerializer):
         }
 
         # Присваиваем value на основе label
-        validated_data['value'] = translation.get(label, label).lower()  # Сохраняем значение в нижнем регистре
+        validated_data['value'] = translation.get(label, label)  # Можно оставить без .lower()
 
         # Создаем объект модели
         return super().create(validated_data)
