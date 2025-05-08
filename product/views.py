@@ -697,11 +697,11 @@ class BannerView(APIView):
 
         # Если баннер существует, обновляем
         if banner:
-            serializer = BannerSerializer(banner, data=request.data, partial=True)
+            serializer = BannerSerializer(banner, data=request.data, partial=True, context={'request': request})
             success_status = status.HTTP_200_OK
         else:
             # Если баннера нет, создаём новый
-            serializer = BannerSerializer(data=request.data)
+            serializer = BannerSerializer(data=request.data, context={'request': request})
             success_status = status.HTTP_201_CREATED
 
         if serializer.is_valid():
