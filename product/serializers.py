@@ -585,12 +585,17 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
         validated_data['user'] = self.context['request'].user
         return super().create(validated_data)
 
+
+
 class BannerSerializer(serializers.ModelSerializer):
-    image = serializers.ImageField()
+    image = serializers.SerializerMethodField()
+
     class Meta:
         model = Banner
         fields = ('id', 'image')
 
     def get_image(self, obj):
-        # Используем встроенный метод .url для получения правильного URL
-        return obj.image.url
+        request = self.context.get('request')
+        if obj.image and request:
+            return request.build_absolute_uri(obj.image.url)
+        return None

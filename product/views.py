@@ -651,7 +651,6 @@ class ReviewDetailView(generics.ListAPIView):
     def get_queryset(self):
         return Review.objects.all()
 
-
 class BannerView(APIView):
     @swagger_auto_schema(
         operation_description="Получить текущий баннер",
@@ -668,7 +667,7 @@ class BannerView(APIView):
         if not banner:
             return Response({"detail": "Banner not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = BannerSerializer(banner)
+        serializer = BannerSerializer(banner, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
