@@ -199,17 +199,20 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.JSONParser',  # Добавлено для обработки JSON запросов
     ],
 }
-
-
-CLOUDINARY_CLOUD_NAME = config('CLOUDINARY_CLOUD_NAME')
-CLOUDINARY_API_KEY = config('CLOUDINARY_API_KEY')
-CLOUDINARY_API_SECRET = config('CLOUDINARY_API_SECRET')
-
+# Cloudinary configuration
 cloudinary.config(
-    cloud_name=CLOUDINARY_CLOUD_NAME,
-    api_key=CLOUDINARY_API_KEY,
-    api_secret=CLOUDINARY_API_SECRET,
+    cloud_name="dag906vzz",  # Замените на ваш cloud_name
+    api_key="544975325714489",  # Замените на ваш api_key
+    api_secret="Lvie8ziZsereKpYxj9OH4q9-q48"  # Замените на ваш api_secret
 )
+
+# Настройки для хранения медиафайлов
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dag906vzz',  # Замените на ваш cloud_name
+    'API_KEY': '544975325714489',   # Замените на ваш api_key
+    'API_SECRET': 'Lvie8ziZsereKpYxj9OH4q9-q48',  # Замените на ваш api_secret
+    'SECURE_URLS': True,
+}
 CSRF_TRUSTED_ORIGINS = ['https://homelifee.onrender.com']
 
 CORS_ALLOW_METHODS = [
