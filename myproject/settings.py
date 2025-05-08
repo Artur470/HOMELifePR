@@ -19,7 +19,8 @@ import certifi
 import os
 from corsheaders.defaults import default_headers
 import dj_database_url
-
+import cloudinary
+from decouple import config
 from decouple import config
 # import cloudinary.uploader
 from decouple import config
@@ -65,6 +66,8 @@ INSTALLED_APPS = [
     'decouple',
     'drf_yasg',
     'corsheaders',
+    'cloudinary',
+    'cloudinary_storage',
 
     #auth
     'rest_framework.authtoken',
@@ -198,9 +201,15 @@ REST_FRAMEWORK = {
 }
 
 
+CLOUDINARY_CLOUD_NAME = config('CLOUDINARY_CLOUD_NAME')
+CLOUDINARY_API_KEY = config('CLOUDINARY_API_KEY')
+CLOUDINARY_API_SECRET = config('CLOUDINARY_API_SECRET')
 
-
-
+cloudinary.config(
+    cloud_name=CLOUDINARY_CLOUD_NAME,
+    api_key=CLOUDINARY_API_KEY,
+    api_secret=CLOUDINARY_API_SECRET,
+)
 CSRF_TRUSTED_ORIGINS = ['https://homelifee.onrender.com']
 
 CORS_ALLOW_METHODS = [
@@ -218,7 +227,4 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 TIME_ZONE = "Asia/Bishkek"
 USE_TZ = True
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'

@@ -2,17 +2,18 @@ from rest_framework import serializers
 from django.db.models import Avg
 from .models import Product, Category, Color, Brand, Review, Banner
 from .utils import round_to_nearest_half
-
+from cloudinary.forms import CloudinaryFileField
 from django.conf import settings
-
+from cloudinary.models import CloudinaryField
 from rest_framework import serializers
 from .models import Product, Brand, Category, Color
+
 class CategorySerializer(serializers.ModelSerializer):
     value = serializers.SerializerMethodField()
 
     class Meta:
-        model = Category
-        fields = ['id', 'label', 'value']
+        model = Category  # Обратите внимание, что вы используете модель Category, а не Brand
+        fields = ['id','label', 'value']
 
     def get_value(self, obj):
         translation = {
@@ -48,15 +49,19 @@ class CategorySerializer(serializers.ModelSerializer):
             'хлебопечка': 'bread maker',
         }
 
-        # Перевод значения value на английский, если оно есть в словаре
-        return translation.get(obj.value, obj.value)  # Нет необходимости использовать lower()
+        # Если значение value уже есть, возвращаем его
+        if obj.value:
+            return translation.get(obj.value, obj.value).lower()
+
+        # Если value нет, присваиваем его на основе label
+        return translation.get(obj.label, obj.label).lower()
 
     def create(self, validated_data):
         label = validated_data.get('label')
 
         # Словарь перевода
         translation = {
-            'холодильник': 'refrigerator',
+             'холодильник': 'refrigerator',
             'стиральная машина': 'washing machine',
             'посудомоечная машина': 'dishwasher',
             'микроволновая печь': 'microwave',
@@ -89,7 +94,7 @@ class CategorySerializer(serializers.ModelSerializer):
         }
 
         # Присваиваем value на основе label
-        validated_data['value'] = translation.get(label, label)  # Можно оставить без .lower()
+        validated_data['value'] = translation.get(label, label).lower()  # Сохраняем значение в нижнем регистре
 
         # Создаем объект модели
         return super().create(validated_data)
@@ -585,17 +590,12 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
         validated_data['user'] = self.context['request'].user
         return super().create(validated_data)
 
-
-
 class BannerSerializer(serializers.ModelSerializer):
-    image = serializers.SerializerMethodField()
-
+    image = serializers.ImageField()
     class Meta:
         model = Banner
         fields = ('id', 'image')
 
     def get_image(self, obj):
-        request = self.context.get('request')
-        if obj.image and request:
-            return request.build_absolute_uri(obj.image.url)
-        return None
+        # Используем встроенный метод .url для получения правильного URL
+        return obj.image.url

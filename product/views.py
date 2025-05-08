@@ -1,6 +1,3 @@
-from django.shortcuts import render
-
-# Create your views here.
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -651,6 +648,7 @@ class ReviewDetailView(generics.ListAPIView):
     def get_queryset(self):
         return Review.objects.all()
 
+
 class BannerView(APIView):
     @swagger_auto_schema(
         operation_description="Получить текущий баннер",
@@ -667,7 +665,7 @@ class BannerView(APIView):
         if not banner:
             return Response({"detail": "Banner not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = BannerSerializer(banner, context={'request': request})
+        serializer = BannerSerializer(banner)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
@@ -697,11 +695,11 @@ class BannerView(APIView):
 
         # Если баннер существует, обновляем
         if banner:
-            serializer = BannerSerializer(banner, data=request.data, partial=True, context={'request': request})
+            serializer = BannerSerializer(banner, data=request.data, partial=True)
             success_status = status.HTTP_200_OK
         else:
             # Если баннера нет, создаём новый
-            serializer = BannerSerializer(data=request.data, context={'request': request})
+            serializer = BannerSerializer(data=request.data)
             success_status = status.HTTP_201_CREATED
 
         if serializer.is_valid():
@@ -726,5 +724,3 @@ class ProductArchiveListView(generics.ListAPIView):
         queryset = super().get_queryset()
 
         return queryset
-
-

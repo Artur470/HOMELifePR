@@ -4,7 +4,7 @@ from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.core.exceptions import ValidationError
-
+from cloudinary.models import CloudinaryField
 from myproject import settings
 
 
@@ -54,11 +54,11 @@ class Color(models.Model):
 
 class Product(models.Model):
     title = models.CharField(max_length=255)
-    image1 = models.ImageField(upload_to='products/')
-    image2 = models.ImageField(upload_to='products/')
-    image3 = models.ImageField(upload_to='products/')
-    image4 = models.ImageField(upload_to='products/', null=True, blank=True)
-    image5 = models.ImageField(upload_to='products/', null=True, blank=True)
+    image1 = CloudinaryField('image1')
+    image2 = CloudinaryField('image2')
+    image3 = CloudinaryField('image3')
+    image4 = CloudinaryField('image4', null=True, blank=True)
+    image5 = CloudinaryField('image5', null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
     color = models.ForeignKey(Color, on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=10, decimal_places=2)  # Цена для обычных клиентов
@@ -121,7 +121,7 @@ class Review(models.Model):
         return f'Review by {self.user} for {self.product} - Rating: {self.rating}'
 
 class Banner(models.Model):
-    image = models.ImageField(upload_to='products/')
+    image = CloudinaryField('image')
 
     def __str__(self):
         return f"Banner {self.image}"
