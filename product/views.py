@@ -45,7 +45,7 @@ class HomepageView(APIView):
     )
     def get(self, request, *args, **kwargs):
         # Получаем данные для главной страницы
-        banner = Banner.objects.filter(id=1).first()
+        banner = Banner.objects.last()
         product_of_the_day = Product.objects.filter(is_product_of_the_day=True, is_active=True).first()
         new_products = Product.objects.filter(is_active=True).order_by('-id')[:5]
         promotion_products = Product.objects.filter(promotion__isnull=False, is_active=True)[:5]
