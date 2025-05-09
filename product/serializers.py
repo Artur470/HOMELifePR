@@ -430,11 +430,14 @@ class ProductShortSerializer(serializers.ModelSerializer):
         return 0
 
     def get_images(self, obj):
-        request = self.context.get('request')
-        images = [obj.image1.url if obj.image1 else None]
-        if request:
-            return [request.build_absolute_uri(image) for image in images if image]
-        return [image for image in images if image]
+        images = [
+            obj.image1,
+            obj.image2,
+            obj.image3,
+            obj.image4,
+            obj.image5,
+        ]
+        return [image.build_url() for image in images if image]
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
