@@ -125,7 +125,7 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 database_url = os.environ.get("DATABASE_URL")
 DATABASES = {
     'default': dj_database_url.parse(
-        "postgresql://dbaziz_user:kNKYt045QyvRHh2i0guFnjpgsP99WmOL@dpg-d05rfv15pdvs73elh8a0-a.oregon-postgres.render.com/dbaziz"
+        "postgresql://azizdb_user:qdf61OVToPr5byfZ49mnAXJxKnyR20at@dpg-d0v5onnfte5s7399tvig-a.oregon-postgres.render.com/azizdb"
     )
 }
 

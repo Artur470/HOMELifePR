@@ -124,6 +124,7 @@ class Banner(models.Model):
     image = CloudinaryField('image')
 
     def __str__(self):
-        return f"Banner {self.image}"
+        return f"Banner {self.image}" if self.image else f"Banner #{self.id}"
+
 
 
