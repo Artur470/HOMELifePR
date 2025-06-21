@@ -506,7 +506,7 @@ def send_order_notification(order, cart):
     """
 
 
-    admin_email = "homelife.site.kg@gmail.com"
+    admin_email = "tiresshopkg@gmail.com"
 
     send_mail(
         subject,
