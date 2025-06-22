@@ -7,7 +7,10 @@ from django.conf import settings
 from cloudinary.models import CloudinaryField
 from rest_framework import serializers
 from .models import Product, Brand, Category, Color
-
+import time
+from rest_framework import serializers
+from cloudinary.utils import cloudinary_url
+from .models import Banner
 class CategorySerializer(serializers.ModelSerializer):
     value = serializers.SerializerMethodField()
 
@@ -594,6 +597,9 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 
+from cloudinary.utils import cloudinary_url
+
+
 class BannerSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
 
@@ -602,4 +608,7 @@ class BannerSerializer(serializers.ModelSerializer):
         fields = ['id', 'image']
 
     def get_image(self, obj):
-        return obj.image.url if obj.image else None
+        # Обязательно возвращаем полный URL, а не относительный путь
+        if obj.image:
+            return obj.image.url
+        return None

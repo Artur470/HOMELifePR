@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 from .models import Banner
 from .serializers import BannerSerializer
 from django.core.exceptions import ValidationError
+import cloudinary
 import logging
 from decimal import Decimal
 from rest_framework.permissions import IsAdminUser
@@ -649,67 +650,6 @@ class ReviewDetailView(generics.ListAPIView):
     def get_queryset(self):
         return Review.objects.all()
 
-
-class BannerView(APIView):
-    @swagger_auto_schema(
-        operation_description="Получить текущий баннер",
-        responses={
-            200: BannerSerializer(),
-            404: "Banner not found"
-        },
-    )
-    def get(self, request, *args, **kwargs):
-        """
-        Возвращает текущий баннер.
-        """
-        banner = Banner.objects.first()
-        if not banner:
-            return Response({"detail": "Banner not found"}, status=status.HTTP_404_NOT_FOUND)
-
-        serializer = BannerSerializer(banner)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    @swagger_auto_schema(
-        operation_description="Добавить или обновить баннер",
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            required=["image"],
-            properties={
-                "image": openapi.Schema(
-                    type=openapi.TYPE_STRING,
-                    format="binary",
-                    description="Файл изображения для баннера",
-                ),
-            },
-        ),
-        responses={
-            200: BannerSerializer(),
-            201: BannerSerializer(),
-            400: "Ошибки валидации данных",
-        },
-    )
-    def put(self, request, *args, **kwargs):
-        """
-        Обновляет существующий баннер или создаёт новый, если его нет.
-        """
-        banner = Banner.objects.first()
-
-        # Если баннер существует, обновляем
-        if banner:
-            serializer = BannerSerializer(banner, data=request.data, partial=True)
-            success_status = status.HTTP_200_OK
-        else:
-            # Если баннера нет, создаём новый
-            serializer = BannerSerializer(data=request.data)
-            success_status = status.HTTP_201_CREATED
-
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=success_status)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 class ProductArchiveListView(generics.ListAPIView):
     queryset = Product.objects.filter(is_active=False).order_by('id')
     serializer_class = ProductShortSerializer
@@ -725,3 +665,38 @@ class ProductArchiveListView(generics.ListAPIView):
         queryset = super().get_queryset()
 
         return queryset
+
+
+class BannerView(APIView):
+    def get(self, request, *args, **kwargs):
+        banner = Banner.objects.first()
+        if not banner:
+            return Response({"detail": "Banner not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        print("GET Banner image public_id:", banner.image.public_id if banner.image else "None")
+        serializer = BannerSerializer(banner)
+        return Response(serializer.data)
+
+    def put(self, request, *args, **kwargs):
+        print("FILES:", request.FILES)
+        print("DATA:", request.data)
+
+        banner = Banner.objects.first()
+        if not banner:
+            banner = Banner.objects.create()
+
+        if 'image' not in request.FILES:
+            return Response({"detail": "No image file provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Удаляем старое изображение из Cloudinary, если есть
+        if banner.image:
+            try:
+                cloudinary.api.delete_resources([banner.image.public_id], invalidate=True)
+            except Exception as e:
+                print(f"Error deleting old image: {e}")
+
+        banner.image = request.FILES['image']
+        banner.save()
+
+        serializer = BannerSerializer(banner)
+        return Response(serializer.data, status=status.HTTP_200_OK)
