@@ -164,7 +164,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
                 'Новый ОПТОВЫЙ ПОКУПАТЕЛЬ!',
                 f"Пользователь с именем {validated_data['username']} хочет зарегистрироваться как новый оптовик.\nEmail: {validated_data['email']}\nНомер телефона: {validated_data['number']}\nКод: {otp_code}",
                 'email',
-                ['homelife.site.kg@gmail.com'],
+                ['tiresshopkg@gmail.com'],
                 fail_silently=False,
             )
 

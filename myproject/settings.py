@@ -210,7 +210,7 @@ cloudinary.config(
     api_key=CLOUDINARY_API_KEY,
     api_secret=CLOUDINARY_API_SECRET,
 )
-CSRF_TRUSTED_ORIGINS = ['https://homelifee.onrender.com']
+CSRF_TRUSTED_ORIGINS = ['https://homelifepr-f56i.onrender.com/']
 
 CORS_ALLOW_METHODS = [
     'GET',
@@ -228,3 +228,19 @@ CORS_ALLOW_ALL_ORIGINS = True
 TIME_ZONE = "Asia/Bishkek"
 USE_TZ = True
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+
+SITE_ID = 1
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = config("EMAIL_HOST_USER")  # должно быть = 'tiresshopkg@gmail.com'
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")  # должно быть = 'pkkmifdsejrworcx'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+ACCOUNT_EMAIL_VERIFICATION = 'optional'
+ACCOUNT_LOGIN_METHODS = {'username'}
+ACCOUNT_SIGNUP_FIELDS = ['username*', 'password1*', 'password2*']
+
